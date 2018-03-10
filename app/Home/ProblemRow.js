@@ -19,7 +19,7 @@ class ProblemRow extends Component {
         super(props, context);
         this.state = {
             item: {
-                name: '',
+                title: '',
                 id: '',
                 tags: [],
                 author: '',
@@ -35,9 +35,18 @@ class ProblemRow extends Component {
         });
     }
 
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (prevState.item.title !== nextProps.item.title) {
+            return {
+                item: nextProps.item
+            };
+        }
+        return null;
+    }
+
     _onPressButton() {
         this.props.navigator.push({
-            title: this.state.item.name,
+            title: this.state.item.title,
             component: Problem,
             passProps: { item: this.state.item }
         });
@@ -47,7 +56,7 @@ class ProblemRow extends Component {
         return (
             <TouchableHighlight underlayColor={'#DDDDDD'} onPress={this._onPressButton}>
                 <View style={styles.container}>
-                    <Text style={styles.title}>{this.state.item.name}</Text>
+                    <Text style={styles.title} numberOfLines={1}>{this.state.item.title}</Text>
                     <View style={styles.tags}>
                     {
                         this.state.item.tags.map((tag, i) => {

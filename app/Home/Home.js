@@ -7,6 +7,7 @@ import {
     Text,
     ActivityIndicator,
     FlatList,
+    Animated,
     AsyncStorage
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -15,6 +16,7 @@ import { SearchBar } from 'react-native-elements';
 import ProblemRow from './ProblemRow';
 
 type Props = {};
+const AnimatedNavigationBar = Animated.createAnimatedComponent(View);
 
 class Home extends Component<Props> {
     static propTypes = {
@@ -25,8 +27,10 @@ class Home extends Component<Props> {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            isLoading: true,
+            isLoading: true
         };
+        this.renderHeader = this.renderHeader.bind(this);
+        this._onSearchProblem = this._onSearchProblem.bind(this);
     }
 
     componentDidMount() {
@@ -36,6 +40,28 @@ class Home extends Component<Props> {
                 problems: JSON.parse(list)
             });
         }).done();
+    }
+
+    _onSearchProblem(pattern) {
+        AsyncStorage.getItem('problems').then((response) => {
+            let problems = JSON.parse(response);
+            let list = problems.filter(p => {
+                return p.title.toLowerCase().indexOf(pattern.toLowerCase()) > -1;
+            });
+            this.setState({
+                problems: list
+            });
+        }).done();
+    }
+
+    renderHeader() {
+        let header = (
+            <View style={styles.header}>
+              <Text style={styles.title}>Problems</Text>
+              <SearchBar lightTheme platform={'ios'} inputStyle={styles.searchInput} containerStyle={styles.searchContainer} placeholder='Search' onChangeText={this._onSearchProblem} />
+            </View>
+        );
+        return header;
     }
 
     render() {
@@ -49,11 +75,7 @@ class Home extends Component<Props> {
 
         return (
             <ScrollView contentContainerStyle={styles.container}>
-              <View style={styles.header}>
-                <Text style={styles.title}>Problems</Text>
-                <SearchBar lightTheme inputStyle={styles.searchInput} containerStyle={styles.searchContainer} placeholder='Search' />
-              </View>
-              <FlatList data={this.state.problems} renderItem={({item}, index) => <ProblemRow key={index} item={item} {...this.props}/>} />
+              <FlatList data={this.state.problems} ListHeaderComponent={this.renderHeader} renderItem={({item}, index) => <ProblemRow key={index} item={item} {...this.props}/>} />
             </ScrollView>
         );
     }
@@ -64,6 +86,7 @@ const styles = StyleSheet.create({
         marginTop: 65,
         flex: 1,
         backgroundColor: '#FFFFFF',
+        flexGrow: 1,
     },
     title: {
         fontSize: 30,

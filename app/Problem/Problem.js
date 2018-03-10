@@ -22,7 +22,7 @@ class Problem extends Component {
         this.state = {
             isLoading: true,
             item: {
-                name: '',
+                title: '',
                 id: '',
                 tags: [],
                 author: '',
@@ -50,7 +50,7 @@ class Problem extends Component {
 
         return (
             <ScrollView style={styles.container}>
-              <Text>{this.state.item.name}</Text>
+              <Text>{this.state.item.title}</Text>
             </ScrollView>
         );
     }
