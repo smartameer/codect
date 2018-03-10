@@ -7,9 +7,9 @@ import {
     TouchableHighlight
 } from 'react-native';
 
-import Problem from '../Problem/Problem';
+import Question from '../Question/Question';
 
-class ProblemRow extends Component {
+class QuestionRow extends Component {
     static propTypes = {
         title: PropTypes.string,
         navigator: PropTypes.object.isRequired,
@@ -48,7 +48,7 @@ class ProblemRow extends Component {
         this.props.navigator.push({
             title: this.state.item.title,
             backButtonTitle: null,
-            component: Problem,
+            component: Question,
             passProps: { item: this.state.item }
         });
     }
@@ -112,5 +112,5 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ProblemRow;
+export default QuestionRow;
 

@@ -10,7 +10,7 @@ import {
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
-class Problem extends Component {
+class Question extends Component {
     static propTypes = {
         title: PropTypes.string,
         item: PropTypes.object.isRequired,
@@ -63,5 +63,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Problem;
+export default Question;
 

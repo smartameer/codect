@@ -12,13 +12,13 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SearchBar } from 'react-native-elements';
 
-import ProblemRow from './ProblemRow';
+import QuestionRow from './QuestionRow';
 
 type Props = {};
 
 class Home extends Component<Props> {
     static propTypes = {
-        title: PropTypes.string.isRequired,
+        title: PropTypes.string,
         navigator: PropTypes.object.isRequired,
     }
 
@@ -28,26 +28,26 @@ class Home extends Component<Props> {
             isLoading: true
         };
         this.renderHeader = this.renderHeader.bind(this);
-        this._onSearchProblem = this._onSearchProblem.bind(this);
+        this._onSearchQuestion = this._onSearchQuestion.bind(this);
     }
 
     componentDidMount() {
-        AsyncStorage.getItem('problems').then((list) => {
+        AsyncStorage.getItem('questions').then((list) => {
             this.setState({
                 isLoading: false,
-                problems: JSON.parse(list)
+                questions: JSON.parse(list)
             });
         }).done();
     }
 
-    _onSearchProblem(pattern) {
-        AsyncStorage.getItem('problems').then((response) => {
-            let problems = JSON.parse(response);
-            let list = problems.filter(p => {
+    _onSearchQuestion(pattern) {
+        AsyncStorage.getItem('questions').then((response) => {
+            let questions = JSON.parse(response);
+            let list = questions.filter(p => {
                 return p.title.toLowerCase().indexOf(pattern.toLowerCase()) > -1;
             });
             this.setState({
-                problems: list
+                questions: list
             });
         }).done();
     }
@@ -55,8 +55,8 @@ class Home extends Component<Props> {
     renderHeader() {
         let header = (
             <View style={styles.header}>
-              <Text style={styles.title}>Problems</Text>
-              <SearchBar autoCapitalize='none' lightTheme platform={'ios'} inputStyle={styles.searchInput} containerStyle={styles.searchContainer} placeholder='Search' onChangeText={this._onSearchProblem} />
+              <Text style={styles.title}>Questions</Text>
+              <SearchBar autoCapitalize='none' lightTheme platform={'ios'} inputStyle={styles.searchInput} containerStyle={styles.searchContainer} placeholder='Search' onChangeText={this._onSearchQuestion} />
             </View>
         );
         return header;
@@ -73,7 +73,7 @@ class Home extends Component<Props> {
 
         return (
             <ScrollView contentContainerStyle={styles.container}>
-              <FlatList data={this.state.problems} ListHeaderComponent={this.renderHeader} renderItem={({item}, index) => <ProblemRow key={index} item={item} {...this.props}/>} />
+              <FlatList data={this.state.questions} ListHeaderComponent={this.renderHeader} renderItem={({item}, index) => <QuestionRow key={index} item={item} {...this.props}/>} />
             </ScrollView>
         );
     }
