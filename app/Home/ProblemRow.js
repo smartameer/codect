@@ -47,6 +47,7 @@ class ProblemRow extends Component {
     _onPressButton() {
         this.props.navigator.push({
             title: this.state.item.title,
+            backButtonTitle: null,
             component: Problem,
             passProps: { item: this.state.item }
         });

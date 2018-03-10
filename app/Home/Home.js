@@ -7,7 +7,6 @@ import {
     Text,
     ActivityIndicator,
     FlatList,
-    Animated,
     AsyncStorage
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -16,7 +15,6 @@ import { SearchBar } from 'react-native-elements';
 import ProblemRow from './ProblemRow';
 
 type Props = {};
-const AnimatedNavigationBar = Animated.createAnimatedComponent(View);
 
 class Home extends Component<Props> {
     static propTypes = {
@@ -58,7 +56,7 @@ class Home extends Component<Props> {
         let header = (
             <View style={styles.header}>
               <Text style={styles.title}>Problems</Text>
-              <SearchBar lightTheme platform={'ios'} inputStyle={styles.searchInput} containerStyle={styles.searchContainer} placeholder='Search' onChangeText={this._onSearchProblem} />
+              <SearchBar autoCapitalize='none' lightTheme platform={'ios'} inputStyle={styles.searchInput} containerStyle={styles.searchContainer} placeholder='Search' onChangeText={this._onSearchProblem} />
             </View>
         );
         return header;
