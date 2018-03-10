@@ -56,7 +56,7 @@ class Home extends Component<Props> {
         let header = (
             <View style={styles.header}>
               <Text style={styles.title}>Questions</Text>
-              <SearchBar autoCapitalize='none' lightTheme platform={'ios'} inputStyle={styles.searchInput} containerStyle={styles.searchContainer} placeholder='Search' onChangeText={this._onSearchQuestion} />
+              <SearchBar autoCapitalize='none' lightTheme platform={'ios'} inputStyle={styles.searchInput} containerStyle={styles.searchContainer} placeholder={'Search from ' + this.state.questions.length + ' questions'} onChangeText={this._onSearchQuestion} />
             </View>
         );
         return header;
