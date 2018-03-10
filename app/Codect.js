@@ -9,6 +9,7 @@ console.disableYellowBox = true;
 // Components based on routes
 import Home from './Home/Home';
 import Settings from './Settings/Settings';
+import Menu from './Menu/Menu';
 
 class Codect  extends Component {
 
@@ -49,12 +50,18 @@ class Codect  extends Component {
         Icon.getImageSource('ios-list', 32).then((source) => this.setState({ leftButtonIcon: source }));
     }
 
-    _handleNavigationRequest() {
-        this.refs.nav.push({
+    _handleNavigationRequest(left) {
+        let obj = {
             component: Settings,
             title: 'Settings'
-        });
+        };
+        if (left === true) {
+            obj = { component: Menu, title: 'Menu' }
+        }
+
+        this.refs.nav.push(obj);
     }
+
 
     render() {
         if (!this.state.rightButtonIcon || !this.state.leftButtonIcon) {
@@ -69,8 +76,9 @@ class Codect  extends Component {
                 component: Home,
                 title: 'Home',
                 leftButtonIcon: this.state.leftButtonIcon,
+                onLeftButtonPress: () => this._handleNavigationRequest(true),
                 rightButtonIcon: this.state.rightButtonIcon,
-                onRightButtonPress: () => this._handleNavigationRequest(),
+                onRightButtonPress: () => this._handleNavigationRequest(false),
             }}
             style={{flex: 1}}
             />
