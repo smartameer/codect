@@ -3,6 +3,9 @@ import {
 } from 'react-native';
 
 import Base64 from 'base-64';
+import yaml from 'js-yaml';
+
+
 class API {
     constructor() {
         this.api_uri = 'https://api.github.com';
@@ -18,7 +21,7 @@ class API {
             headers: {
                 'Accept': 'application/vnd.github.v3+json',
                 'Content-Type': 'application/json',
-                'Cache-Control': 'no-cache',
+                // 'Cache-Control': 'no-cache',
             }
         });
     }
@@ -63,6 +66,29 @@ class API {
                     console.log(error);
                     return reject(error);
                 });
+        });
+    }
+
+    async fetchQuestionContent() {
+        AsyncStorage.getItem('questions').then((questions) => {
+            let list = JSON.parse(questions);
+            list.forEach(q => {
+                this.processRequest(q.content)
+                    .then((resp) => resp.json())
+                    .then(async (resp) => {
+                        try {
+                            let content = Base64.decode(resp.content);
+                            let jsonContent = yaml.safeLoad(content);
+                            let stringifyContent = JSON.stringify(jsonContent);
+                            AsyncStorage.setItem('question_id_' + q.id, stringifyContent);
+                            AsyncStorage.setItem('question_id_' + q.id + '_last_sha', resp.sha);
+                        } catch (error) {
+                            console.log(error);
+                        }
+                    }).catch(error => {
+                        console.log(error);
+                    });
+            });
         });
     }
 }

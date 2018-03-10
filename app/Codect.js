@@ -31,6 +31,7 @@ class Codect  extends Component {
         Icon.getImageSource('ios-list', 32).then((source) => this.setState({ leftButtonIcon: source }));
         this.apiService.fetchQuestionsList().then(() => {
             this.setState({ isLoading: false});
+            this.apiService.fetchQuestionContent();
         }).catch(() => {
             this.setState({ isLoading: false});
         });
