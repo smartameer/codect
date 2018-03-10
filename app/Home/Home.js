@@ -7,10 +7,10 @@ import {
     Text,
     ActivityIndicator,
     FlatList,
-    Button,
     AsyncStorage
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { SearchBar } from 'react-native-elements';
 
 import ProblemRow from './ProblemRow';
 
@@ -49,6 +49,10 @@ class Home extends Component<Props> {
 
         return (
             <ScrollView contentContainerStyle={styles.container}>
+              <View style={styles.header}>
+                <Text style={styles.title}>Problems</Text>
+                <SearchBar lightTheme inputStyle={styles.searchInput} containerStyle={styles.searchContainer} placeholder='Search' />
+              </View>
               <FlatList data={this.state.problems} renderItem={({item}, index) => <ProblemRow key={index} item={item} {...this.props}/>} />
             </ScrollView>
         );
@@ -59,12 +63,34 @@ const styles = StyleSheet.create({
     container: {
         marginTop: 65,
         flex: 1,
-        backgroundColor: '#F5FCFF',
+        backgroundColor: '#FFFFFF',
     },
-    welcome: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
+    title: {
+        fontSize: 30,
+        fontWeight: '800',
+    },
+    header: {
+        paddingLeft: 16,
+        paddingRight: 16,
+        paddingTop: 20,
+        paddingBottom: 8,
+        flexDirection: 'column',
+        borderBottomColor: '#bbb',
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        backgroundColor: 'transparent'
+    },
+    searchContainer: {
+        marginLeft: -8,
+        marginRight: -8,
+        backgroundColor: 'transparent',
+        borderTopWidth: 0,
+        borderBottomWidth: 0,
+        shadowColor: 'transparent',
+    },
+    searchInput: {
+        backgroundColor: '#efefef',
+        borderRadius: 6,
+        padding: 4,
     },
     item: {
         padding: 10,

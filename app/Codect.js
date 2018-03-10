@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 // Components based on routes
 import Home from './Home/Home';
+import Settings from './Settings/Settings';
 
 class Codect  extends Component {
 
@@ -38,11 +39,10 @@ class Codect  extends Component {
     }
 
     _handleNavigationRequest() {
-        //this.refs.nav.push({
-        //    component: MyView,
-        //    title: 'Genius',
-        //    passProps: { myProp: 'genius' },
-        //});
+        this.refs.nav.push({
+            component: Settings,
+            title: 'Settings'
+        });
     }
 
     render() {
