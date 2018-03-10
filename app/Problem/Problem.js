@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 class Problem extends Component {
     static propTypes = {
-        title: PropTypes.string.isRequired,
+        title: PropTypes.string,
         item: PropTypes.object.isRequired,
         navigator: PropTypes.object.isRequired,
     }

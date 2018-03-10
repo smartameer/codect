@@ -17,7 +17,6 @@ class ProblemRow extends Component {
 
     constructor(props, context) {
         super(props, context);
-        this._onPressButton = this._onPressButton.bind(this);
         this.state = {
             item: {
                 name: '',
@@ -27,6 +26,7 @@ class ProblemRow extends Component {
                 language: []
             }
         };
+        this._onPressButton = this._onPressButton.bind(this);
     }
 
     componentDidMount() {
@@ -45,7 +45,7 @@ class ProblemRow extends Component {
 
     render() {
         return (
-            <TouchableHighlight underlayColor={'#FFFFFF'} onPress={this._onPressButton}>
+            <TouchableHighlight underlayColor={'#DDDDDD'} onPress={this._onPressButton}>
                 <View style={styles.container}>
                     <Text style={styles.title}>{this.state.item.name}</Text>
                     <View style={styles.tags}>
@@ -86,9 +86,10 @@ const styles = StyleSheet.create({
         color: '#666',
         fontWeight: 'bold',
         fontSize: 20,
-        marginTop: -8,
+        lineHeight: 16,
         marginRight: 4,
-        marginLeft: 4
+        marginLeft: 4,
+        alignSelf: 'center'
     },
     container: {
         paddingLeft: 16,
