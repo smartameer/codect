@@ -134,9 +134,10 @@ const styles = StyleSheet.create({
         marginTop: 0
     },
     itemContainer: {
-        paddingTop: 4,
-        paddingBottom: 4,
-        paddingRight: 8,
+        paddingTop: 8,
+        paddingBottom: 8,
+        paddingRight: 16,
+        paddingLeft: 0,
         borderBottomColor: '#bbb',
         borderBottomWidth: StyleSheet.hairlineWidth,
     },

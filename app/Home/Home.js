@@ -12,6 +12,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SearchBar } from 'react-native-elements';
 
+import EM from '../API/Event';
 import QuestionRow from './QuestionRow';
 
 type Props = {};
@@ -26,15 +27,35 @@ class Home extends Component<Props> {
         super(props, context);
         this.state = {
             isLoading: true,
+            searchText: '',
+            refreshing: true,
             questions: null,
             sortBy: null,
+            filterType: null,
             filterBy: null,
         };
+        this.getData = this.getData.bind(this);
         this.renderHeader = this.renderHeader.bind(this);
+        this.renderEmptyComponent = this.renderEmptyComponent.bind(this);
         this._onSearchQuestion = this._onSearchQuestion.bind(this);
     }
 
     componentDidMount() {
+        EM.subscribe('codect:refresh:home', () => {
+            this.getData();
+        });
+        this.getData();
+    }
+
+    getData () {
+        this.setState({ refreshing: true });
+        AsyncStorage.getItem('sortBy').then((resp) =>  {
+            this.setState({ sortBy: resp });
+        });
+        AsyncStorage.getItem('filterBy').then(async (resp) => {
+            let filterType = await AsyncStorage.getItem('filterType');
+            this.setState({ filterBy: resp, filterType: filterType })
+        });
         AsyncStorage.getItem('questions').then((list) => {
             if (list === null) {
                 this.setState({
@@ -47,18 +68,21 @@ class Home extends Component<Props> {
                 if (questions.message) {
                     questions = [];
                 }
+                if (this.state.searchText !== '') {
+                    questions = questions.filter(p => {
+                        return p.title.toLowerCase().indexOf(this.state.searchText.toLowerCase()) > -1;
+                    });
+                }
+                if (this.state.sortBy === 'latest') {
+                    questions.sort((a, b) => { return a.id < b.id });
+                }
                 this.setState({
                     isLoading: false,
+                    refreshing: false,
                     questions: questions
                 });
             }
         }).done();
-        AsyncStorage.getItem('sortBy').then((resp) =>  {
-            this.setState({ sortBy: resp || 'latest' });
-        });
-        AsyncStorage.getItem('filterBy').then((resp) => {
-            this.setState({ filterBy: resp })
-        });
     }
 
     _onSearchQuestion(pattern) {
@@ -70,7 +94,11 @@ class Home extends Component<Props> {
                     return p.title.toLowerCase().indexOf(pattern.toLowerCase()) > -1;
                 });
             }
+            if (this.state.sortBy === 'latest') {
+                list.sort((a, b) => { return a.id < b.id });
+            }
             this.setState({
+                searchText: pattern,
                 questions: list
             });
         }).done();
@@ -87,6 +115,12 @@ class Home extends Component<Props> {
         return header;
     }
 
+    renderEmptyComponent() {
+        return (
+            <Text style={styles.emptyList}>No questions found.</Text>
+        );
+    }
+
     render() {
         if (this.state.isLoading || this.state.questions === null || this.state.sortBy === null) {
             return (
@@ -98,7 +132,14 @@ class Home extends Component<Props> {
 
         return (
             <ScrollView contentContainerStyle={styles.container}>
-              <FlatList data={this.state.questions} ListHeaderComponent={this.renderHeader} renderItem={({item}, index) => <QuestionRow key={index} item={item} {...this.props}/>} />
+                <FlatList
+                    data={this.state.questions}
+                    extraData={this.state}
+                    refreshing={this.state.refreshing}
+                    onRefresh={this.getData}
+                    ListEmptyComponent={this.renderEmptyComponent}
+                    ListHeaderComponent={this.renderHeader}
+                    renderItem={({item}, index) => <QuestionRow key={index} item={item} {...this.props}/>} />
             </ScrollView>
         );
     }
@@ -149,6 +190,12 @@ const styles = StyleSheet.create({
         color: '#bbb',
         alignSelf: 'flex-end',
         marginTop: -3,
+    },
+    emptyList: {
+        marginTop: 20,
+        textAlign: 'center',
+        color: '#ccc',
+        fontSize: 16,
     }
 });
 

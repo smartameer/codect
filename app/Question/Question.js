@@ -8,8 +8,10 @@ import {
     ScrollView,
     AsyncStorage
 } from 'react-native';
-import {Divider} from 'react-native-elements';
+import { ButtonGroup } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
+
+import EM from '../API/Event';
 
 class Question extends Component {
     static propTypes = {
@@ -30,7 +32,10 @@ class Question extends Component {
                 language: [],
             },
             content: {},
+            selectedIndex: 0,
         };
+        this.renderLanguageList = this.renderLanguageList.bind(this);
+        this._updateIndex = this._updateIndex.bind(this);
     }
 
     componentDidMount() {
@@ -46,6 +51,28 @@ class Question extends Component {
         });
     }
 
+    _updateIndex(selectedIndex) {
+        this.setState({selectedIndex})
+    }
+
+    renderLanguageList () {
+        const languages = this.state.content.languages;
+        const { selectedIndex } = this.state;
+
+        return (
+            <ButtonGroup
+                onPress={this._updateIndex}
+                selectedIndex={selectedIndex}
+                buttons={languages}
+                selectedTextStyle={styles.activeTextStyle}
+                selectedButtonStyle={styles.activeBtnStyle}
+                containerStyle={styles.btnGroupContainer}
+                textStyle={styles.btnTextStyle}
+                buttonStyle={styles.btnStyle}
+            />
+        )
+    }
+
     render() {
         if (this.state.isLoading) {
             return (
@@ -56,36 +83,28 @@ class Question extends Component {
         }
 
 
+        let currentCode = this.state.content.languages[this.state.selectedIndex];
         return (
-            <ScrollView style={styles.container}>
-              <Text style={styles.title}>{this.state.content.title}</Text>
-              <Divider style={{ backgroundColor: '#007aff', height: 0.5 }} />
-              <Text style={styles.description}>{this.state.content.description}</Text>
-              <Divider style={{ backgroundColor: '#bbb', height: 0.5 }} />
-              <View style={styles.codeContainer}>
-              {
-                  this.state.content.languages.map((l, i) => {
-                      return (<View key={i} style={styles.codeWrapper}>
-                          <View style={styles.langHeader}>
-                              <Text>Language: </Text>
-                              <View style={styles[l.toLowerCase()]}>
-                                  <Text style={styles.language}>{l}</Text>
-                              </View>
-                          </View>
-                          <Text style={styles.code}>{this.state.content.code[l]}</Text>
-                      </View>)
-                  })
-              }
-              </View>
-              <Divider style={{ backgroundColor: '#bbb', height: 0.5 }} />
-              <View style={styles.tags}>
-              {
-                  this.state.content.tags.map((t, i) => {
-                    return <Text style={styles.tag} key={i}>{t}</Text>
-                  })
-              }
-              </View>
-            </ScrollView>
+            <View style={styles.container}>
+                <View style={{ position: 'absolute', top: 0, bottom: 0, left: 0, width: 10}} />
+                <ScrollView style={styles.page}>
+                    <Text style={styles.title}>{this.state.content.title}</Text>
+                    <View style={styles.tags}>
+                    <Icon name="ios-pricetags" size={18} style={styles.tagIcon}/>
+                    {
+                        this.state.content.tags.map((t, i) => {
+                          return <Text style={styles.tag} key={i}>{t}</Text>
+                        })
+                    }
+                    </View>
+                    <Text style={styles.description}>{this.state.content.description}</Text>
+                    { this.renderLanguageList() }
+                    <View style={styles.codeContainer}>
+                        <Text style={styles.code}>{this.state.content.code[currentCode]}</Text>
+                    </View>
+                    <Text style={styles.credits}>Credits: {this.state.content.author}</Text>
+                </ScrollView>
+            </View>
         );
     }
 }
@@ -94,71 +113,85 @@ const styles = StyleSheet.create({
     container: {
         marginTop: 63,
         flex: 1,
-        backgroundColor: '#FFFFFF',
     },
     title: {
-        fontSize: 20,
-        fontWeight: '600',
-        padding: 8,
+        fontSize: 24,
+        fontWeight: "800",
+        alignSelf: 'flex-start',
     },
-    description: {
-        padding: 8,
-        fontSize: 16,
-    },
-    tags: {
-        marginTop: 8,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-    },
-    tag: {
-        paddingRight: 0,
-        paddingTop: 3,
-        paddingBottom: 3,
-        fontSize: 11,
-        fontWeight: "600",
-        color: '#aaa',
-    },
-    codeContainer: {
-        marginTop: 3,
+    page: {
+        padding: 12,
         flex: 1,
     },
-    codeWrapper: {
-        marginTop: 3,
+    tags: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        backgroundColor: '#fefefe',
+        marginTop: 16,
+        paddingBottom: 8,
     },
-    langHeader: {
-        paddingLeft: 8,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+    tagIcon: {
+        color: '#007aff',
+        marginRight: 8,
     },
-    javascript: { backgroundColor: 'rgb(244, 218, 26)', borderRadius: 3, marginRight: 3, },
-    php: { backgroundColor: 'rgb(98, 101, 163)', borderRadius: 3, marginRight: 3, },
-    python: { backgroundColor: 'rgb(41, 85, 130)', borderRadius: 3, marginRight: 3, },
-    java: { backgroundColor: 'rgb(223, 91, 8)', borderRadius: 3, marginRight: 3, },
-    c: { backgroundColor: 'rgb(18, 142, 224)', borderRadius: 3, marginRight: 3, },
-    ruby: { backgroundColor: 'rgb(158, 0, 4)', borderRadius: 3, marginRight: 3, },
-    'c++': { backgroundColor: 'rgb(82, 134, 200)', borderRadius: 3, marginRight: 3, },
-    language: {
-        paddingRight: 6,
+    tag: {
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: '#007aff',
+        paddingTop: 2,
+        paddingBottom: 2,
         paddingLeft: 6,
-        paddingTop: 4,
-        paddingBottom: 4,
-        fontSize: 13,
-        fontWeight: "600",
+        paddingRight: 6,
+        borderRadius: 10,
+        fontSize: 12,
+        color: '#007aff',
+        marginRight: 5,
+    },
+    description: {
+        fontSize: 16,
+        fontWeight: '500',
+        marginTop: 16,
+        paddingBottom: 8,
+    },
+    btnTextStyle: {
+        fontSize: 16,
+    },
+    btnStyle: {
+        borderBottomRightRadius: 0,
+        borderBottomLeftRadius: 0,
+    },
+    btnGroupContainer: {
+        height: 32,
+        borderWidth: 0,
+        marginLeft: 0,
+        marginRight: 0,
+    },
+    activeBtnStyle: {
+        backgroundColor: '#007aff',
+    },
+    activeTextStyle: {
+        color: '#FFFFFF',
+    },
+    codeContainer: {
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: '#bbb',
+        borderRadius: 4,
+        backgroundColor: 'transparent',
+        marginTop: 8,
+        marginBottom: 20,
     },
     code: {
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        backgroundColor: '#efefef',
-        color: '#282828',
-        paddingTop: 8,
-        paddingLeft: 8,
-        paddingRight: 8,
-        paddingBottom: 8,
-        borderRadius: 4,
-    }
+        color: '#434343',
+        fontWeight: '600',
+        paddingLeft: 12,
+        paddingTop: 6,
+        paddingBottom: 6,
+        paddingRight: 6,
+        fontSize: 14,
+    },
+    credits: {
+        color: '#bbb',
+        fontSize: 13,
+        marginBottom: 30,
+    },
 });
 
 export default Question;

@@ -8,9 +8,9 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import { List, ListItem } from 'react-native-elements';
 
-import Home from '../Home/Home';
 import Categories from './Categories';
 import Bookmarks from './Bookmarks';
+import EM from '../API/Event';
 
 class Menu extends Component {
     static propTypes = {
@@ -60,40 +60,39 @@ class Menu extends Component {
         this.props.navigator.push(obj);
     }
 
-    _expandList (type) {
-        this.setState({ [type] : !this.state[type] });
+    _expandList () {
+        this.setState({ sort : !this.state.sort });
     }
 
-    _selectOption ( type, val) {
+    _selectOption (val) {
         let self = this;
-        this.setState({ [type + 'By'] : val }, () => {
-            AsyncStorage.setItem( type+ 'By', val ).then(() => {
+        this.setState({ 'sortBy': val }, () => {
+            AsyncStorage.setItem( 'sortBy', val ).then(() => {
                 self.props.navigator.popToTop();
+                EM.publish('codect:refresh:home');
             });
         });
     }
 
     render() {
         let plus = (<Icon name="ios-add-outline" size={26} />);
-        let minu = (<Icon name="ios-remove-outline" size={20} />);
+        let minus = (<Icon name="ios-remove-outline" size={26} />);
         let arrow = (<Icon name="ios-arrow-forward-outline" size={20} />);
         let radioOn = (<Icon name="ios-radio-button-on-outline" size={16} style={{color: '#007aff'}} />);
         let radioOff = (<Icon name="ios-radio-button-off-outline" size={16} />);
 
         let sort = (<Icon style={styles.leftIcon} name="ios-reorder-outline" size={28} />);
-        let filter = (<Icon style={styles.leftIcon} name="ios-funnel-outline" size={28} />);
         let category = (<Icon style={styles.leftIcon} name="ios-list-box-outline" size={28} />);
         let bookmarks = (<Icon style={styles.leftIcon} name="ios-bookmarks-outline" size={28} />);
         return (
             <List containerStyle={styles.container}>
-                <ListItem component={TouchableHighlight} titleStyle={styles.titleStyle} containerStyle={styles.itemContainer} title="Sort by" leftIcon={sort} rightIcon={plus} onPress={() => { this._expandList('sort') }}/>
+                <ListItem component={TouchableHighlight} titleStyle={styles.titleStyle} containerStyle={styles.itemContainer} title="Sort by" leftIcon={sort} rightIcon={this.state.sort ? minus: plus} onPress={() => { this.setState({ sort : !this.state.sort }); }}/>
                 {
-                    this.state.sort && <ListItem component={TouchableHighlight} titleStyle={styles.subTitleStyle} containerStyle={styles.subItemContainer} title='Latest' rightIcon={this.state.sortBy === 'latest' ? radioOn : radioOff} onPress={() => { this._selectOption('sort', 'latest') }} />
+                    this.state.sort && <ListItem component={TouchableHighlight} titleStyle={styles.subTitleStyle} containerStyle={styles.subItemContainer} title='Latest' rightIcon={this.state.sortBy === 'latest' ? radioOn : radioOff} onPress={() => { this._selectOption('latest') }} />
                 }
                 {
-                    this.state.sort && <ListItem component={TouchableHighlight} titleStyle={styles.subTitleStyle} containerStyle={styles.subItemContainer} title='Oldest' rightIcon={this.state.sortBy === 'oldest' ? radioOn : radioOff} onPress={() => { this._selectOption('sort', 'oldest') }} />
+                    this.state.sort && <ListItem component={TouchableHighlight} titleStyle={styles.subTitleStyle} containerStyle={styles.subItemContainer} title='Oldest' rightIcon={this.state.sortBy === 'oldest' ? radioOn : radioOff} onPress={() => { this._selectOption('oldest') }} />
                 }
-                <ListItem component={TouchableHighlight} titleStyle={styles.titleStyle} containerStyle={styles.itemContainer} title="Filter by" leftIcon={filter} rightIcon={plus} onPress={() => { this._expandList('filter') }}/>
                 <ListItem component={TouchableHighlight} titleStyle={styles.titleStyle} containerStyle={styles.itemContainer} title="Categories" leftIcon={category} rightIcon={arrow} onPress={() => {this._handleNavigation('category')}}/>
                 <ListItem component={TouchableHighlight} titleStyle={styles.titleStyle} containerStyle={styles.itemContainer} title="Bookmarks" leftIcon={bookmarks} rightIcon={arrow} onPress={() => {this._handleNavigation('bookmarks')}}/>
             </List>

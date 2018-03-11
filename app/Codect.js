@@ -64,11 +64,12 @@ class Codect  extends Component {
           <NavigatorIOS
             ref='nav'
             translucent={true}
-            interactivePopGestureEnabled={true}
+            //interactivePopGestureEnabled={true}
             configureScene={ this.configureScene }
             initialRoute={{
                 component: Home,
-                title: 'Home',
+                title: 'Codect',
+                backButtonTitle: 'Home',
                 leftButtonIcon: this.state.leftButtonIcon,
                 onLeftButtonPress: () => this._handleNavigationRequest(true),
                 rightButtonIcon: this.state.rightButtonIcon,

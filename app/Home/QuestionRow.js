@@ -4,10 +4,13 @@ import {
     StyleSheet,
     View,
     Text,
+    AsyncStorage,
     TouchableHighlight
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import Question from '../Question/Question';
+import EM from '../API/Event';
 
 class QuestionRow extends Component {
     static propTypes = {
@@ -18,15 +21,13 @@ class QuestionRow extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            item: {
-                title: '',
-                id: '',
-                tags: [],
-                author: '',
-                language: []
-            }
+            item: this.props.item,
+            rightButtonIcon: null,
+            bookmarked: false,
         };
         this._onPressButton = this._onPressButton.bind(this);
+        this._handleBookmarking = this._handleBookmarking.bind(this);
+        this.getBookmarkData = this.getBookmarkData.bind(this);
         this.langMap = {
             javascript: 'JS',
             php: 'PHP',
@@ -39,8 +40,21 @@ class QuestionRow extends Component {
     }
 
     componentDidMount() {
-        this.setState({
-            item: this.props.item
+        this.getBookmarkData();
+        EM.subscribe('codect:refresh:bookmark', () => {
+            this.getBookmarkData();
+        });
+    }
+
+    getBookmarkData() {
+        Icon.getImageSource('ios-bookmark-outline', 26).then((source) => this.setState({ rightButtonIcon: source }));
+        AsyncStorage.getItem('bookmark_question_' + this.state.item.id).then((resp) => {
+            let bookmarked = false;
+            if (resp !== null) {
+                bookmarked = true;
+                Icon.getImageSource('ios-bookmark', 26).then((source) => this.setState({ rightButtonIcon: source }));
+            }
+            this.setState({ bookmarked });
         });
     }
 
@@ -53,11 +67,29 @@ class QuestionRow extends Component {
         return null;
     }
 
+    _handleBookmarking() {
+        this.setState({
+            bookmarked: !this.state.bookmarked
+        }, () => {
+            if (this.state.bookmarked) {
+                AsyncStorage.setItem('bookmark_question_' + this.state.item.id, 'true').then(() => {
+                    EM.publish('codect:refresh:bookmark');
+                });
+            } else {
+                AsyncStorage.removeItem('bookmark_question_' + this.state.item.id).then(() => {
+                    EM.publish('codect:refresh:bookmark');
+                });
+            }
+        });
+    }
+
     _onPressButton() {
         this.props.navigator.push({
             title: this.state.item.title,
             backButtonTitle: null,
             component: Question,
+            rightButtonIcon: this.state.rightButtonIcon,
+            onRightButtonPress: () => this._handleBookmarking(),
             passProps: { item: this.state.item }
         });
     }
@@ -132,7 +164,7 @@ const styles = StyleSheet.create({
     },
     javascript: { backgroundColor: 'rgb(244, 218, 26)', borderRadius: 3, marginRight: 3, },
     php: { backgroundColor: 'rgb(98, 101, 163)', borderRadius: 3, marginRight: 3, },
-    python: { backgroundColor: 'rgb(41, 85, 130)', borderRadius: 3, marginRight: 3, },
+    python: { backgroundColor: 'rgb(254, 199, 53)', borderRadius: 3, marginRight: 3, },
     java: { backgroundColor: 'rgb(223, 91, 8)', borderRadius: 3, marginRight: 3, },
     c: { backgroundColor: 'rgb(18, 142, 224)', borderRadius: 3, marginRight: 3, },
     ruby: { backgroundColor: 'rgb(158, 0, 4)', borderRadius: 3, marginRight: 3, },
