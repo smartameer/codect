@@ -15,14 +15,15 @@ class API {
         this.fetchQuestionsList = this.fetchQuestionsList.bind(this);
     }
 
-    processRequest(api) {
+    processRequest(api, headers = {}) {
+        let requestHeaders = Object.assign({}, {
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache',
+        }, headers);
         return fetch(this.api_uri + this.base_path + api + '?ref=master', {
             method: 'GET',
-            headers: {
-                'Accept': 'application/vnd.github.v3+json',
-                'Content-Type': 'application/json',
-                // 'Cache-Control': 'no-cache',
-            }
+            headers: requestHeaders
         });
     }
 
@@ -32,6 +33,10 @@ class API {
                 .then((resp) => resp.json())
                 .then(async (resp) => {
                     let response = resp;
+                    if (response.message) {
+                        return reject();
+                    }
+
                     let sha = await AsyncStorage.getItem('last_fetched_sha');
                     if (sha !== null && response.sha === sha) {
                         return resolve();

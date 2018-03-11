@@ -25,7 +25,8 @@ class Home extends Component<Props> {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            isLoading: true
+            isLoading: true,
+            questions: null,
         };
         this.renderHeader = this.renderHeader.bind(this);
         this._onSearchQuestion = this._onSearchQuestion.bind(this);
@@ -33,19 +34,34 @@ class Home extends Component<Props> {
 
     componentDidMount() {
         AsyncStorage.getItem('questions').then((list) => {
-            this.setState({
-                isLoading: false,
-                questions: JSON.parse(list)
-            });
+            if (list === null) {
+                this.setState({
+                    isLoading: false,
+                    questions: []
+                });
+
+            } else {
+                let questions = JSON.parse(list);
+                if (questions.message) {
+                    questions = [];
+                }
+                this.setState({
+                    isLoading: false,
+                    questions: questions
+                });
+            }
         }).done();
     }
 
     _onSearchQuestion(pattern) {
         AsyncStorage.getItem('questions').then((response) => {
-            let questions = JSON.parse(response);
-            let list = questions.filter(p => {
-                return p.title.toLowerCase().indexOf(pattern.toLowerCase()) > -1;
-            });
+            let list = [];
+            if (response !== null) {
+                let questions = JSON.parse(response);
+                list = questions.filter(p => {
+                    return p.title.toLowerCase().indexOf(pattern.toLowerCase()) > -1;
+                });
+            }
             this.setState({
                 questions: list
             });
@@ -63,7 +79,7 @@ class Home extends Component<Props> {
     }
 
     render() {
-        if (this.state.isLoading) {
+        if (this.state.isLoading || this.state.questions === null) {
             return (
                 <View style={{flex: 1, marginTop: 100}}>
                     <ActivityIndicator />
