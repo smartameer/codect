@@ -27,6 +27,8 @@ class Home extends Component<Props> {
         this.state = {
             isLoading: true,
             questions: null,
+            sortBy: null,
+            filterBy: null,
         };
         this.renderHeader = this.renderHeader.bind(this);
         this._onSearchQuestion = this._onSearchQuestion.bind(this);
@@ -51,6 +53,12 @@ class Home extends Component<Props> {
                 });
             }
         }).done();
+        AsyncStorage.getItem('sortBy').then((resp) =>  {
+            this.setState({ sortBy: resp || 'latest' });
+        });
+        AsyncStorage.getItem('filterBy').then((resp) => {
+            this.setState({ filterBy: resp })
+        });
     }
 
     _onSearchQuestion(pattern) {
@@ -73,13 +81,14 @@ class Home extends Component<Props> {
             <View style={styles.header}>
               <Text style={styles.title}>Questions</Text>
               <SearchBar autoCapitalize='none' lightTheme platform={'ios'} inputStyle={styles.searchInput} containerStyle={styles.searchContainer} placeholder={'Search from ' + this.state.questions.length + ' questions'} onChangeText={this._onSearchQuestion} />
+              <Text style={styles.sortedBy}>Sorted by: {this.state.sortBy}</Text>
             </View>
         );
         return header;
     }
 
     render() {
-        if (this.state.isLoading || this.state.questions === null) {
+        if (this.state.isLoading || this.state.questions === null || this.state.sortBy === null) {
             return (
                 <View style={{flex: 1, marginTop: 100}}>
                     <ActivityIndicator />
@@ -134,6 +143,12 @@ const styles = StyleSheet.create({
         fontSize: 18,
         height: 44,
         color: '#0079fe'
+    },
+    sortedBy: {
+        fontSize: 11,
+        color: '#bbb',
+        alignSelf: 'flex-end',
+        marginTop: -3,
     }
 });
 
