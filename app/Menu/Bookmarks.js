@@ -73,6 +73,7 @@ class Bookmarks extends Component {
                 {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
                 {text: 'OK', onPress: () => {
                     AsyncStorage.removeItem('bookmark_question_' + item.id).then(() => {
+                        EM.publish('codect:bookmark:removed', item.id);
                         this.setState({ undoBookmarkQuestionId: item.id }, () => {
                             this.getBookmarkData();
                         });
@@ -85,6 +86,7 @@ class Bookmarks extends Component {
 
     _undoRemoveBookmark() {
         AsyncStorage.setItem('bookmark_question_' + this.state.undoBookmarkQuestionId, 'true').then(() => {
+            EM.publish('codect:bookmark:added', this.state.undoBookmarkQuestionId);
             this.setState({ undoBookmarkQuestionId: null }, () => {
                 this.getBookmarkData();
             });
@@ -122,7 +124,6 @@ class Bookmarks extends Component {
     }
 
     render() {
-        let trash = (<Icon name="ios-trash-outline" size={26} style={{color: '#ff3b30', marginRight: 8}}/>);
         return (
             <ScrollView style={styles.container}>
                 <FlatList

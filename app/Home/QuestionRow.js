@@ -43,6 +43,16 @@ class QuestionRow extends Component {
 
     componentDidMount() {
         this.getBookmarkData();
+        EM.subscribe('codect:bookmark:removed', (id) => {
+            if (this.state.item.id === id) {
+                this.setState({ bookmarked: false });
+            }
+        });
+        EM.subscribe('codect:bookmark:added', (id) => {
+            if (this.state.item.id === id) {
+                this.setState({ bookmarked: true });
+            }
+        });
     }
 
     getBookmarkData() {
