@@ -96,7 +96,9 @@ class Categories extends Component {
 
     componentDidMount() {
         Icon.getImageSource('ios-pricetags-outline', 24).then((source) => this.setState({ tagIcon: source }));
-        Icon.getImageSource('ios-barcode-outline', 24).then((source) => this.setState({ languageIcon: source }));
+        Icon.getImageSource('ios-analytics-outline', 24).then((source) => this.setState({ languageIcon: source }));
+        Icon.getImageSource('ios-pricetags', 24).then((source) => this.setState({ selectedTagIcon: source }));
+        Icon.getImageSource('ios-analytics', 24).then((source) => this.setState({ selectedLanguageIcon: source }));
     }
 
     _onSelectTab(type) {
@@ -104,15 +106,15 @@ class Categories extends Component {
     }
 
     render() {
-        if (!this.state.tagIcon || !this.state.languageIcon) {
+        if (!this.state.tagIcon || !this.state.languageIcon || !this.state.selectedTagIcon || !this.state.selectedLanguageIcon) {
             return false;
         }
         return (
             <TabBarIOS selectedTab={this.state.selectedTab}>
-              <TabBarIOS.Item title="Tags" selected={this.state.selectedTab === 'tags'} icon={this.state.tagIcon} onPress={() => { this._onSelectTab('tags') }}>
+              <TabBarIOS.Item title="Tags" selected={this.state.selectedTab === 'tags'} selectedIcon={this.state.selectedTagIcon} icon={this.state.tagIcon} onPress={() => { this._onSelectTab('tags') }}>
                 <Tags />
               </TabBarIOS.Item>
-              <TabBarIOS.Item title="Languages" selected={this.state.selectedTab === 'language'} icon={this.state.languageIcon} onPress={() => { this._onSelectTab('language') }}>
+              <TabBarIOS.Item title="Languages" selected={this.state.selectedTab === 'language'} selectedIcon={this.state.selectedLanguageIcon} icon={this.state.languageIcon} onPress={() => { this._onSelectTab('language') }}>
                 <Languages />
               </TabBarIOS.Item>
             </TabBarIOS>

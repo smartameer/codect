@@ -27,8 +27,8 @@ class Codect  extends Component {
     }
 
     componentDidMount() {
-        Icon.getImageSource('ios-cog', 26).then((source) => this.setState({ rightButtonIcon: source }));
-        Icon.getImageSource('ios-list', 32).then((source) => this.setState({ leftButtonIcon: source }));
+        Icon.getImageSource('ios-settings-outline', 26).then((source) => this.setState({ rightButtonIcon: source }));
+        Icon.getImageSource('ios-list-outline', 32).then((source) => this.setState({ leftButtonIcon: source }));
         this.apiService.fetchQuestionsList().then(() => {
             this.setState({ isLoading: false});
             this.apiService.fetchQuestionContent();

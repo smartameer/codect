@@ -81,7 +81,7 @@ class Menu extends Component {
         let radioOn = (<Icon name="ios-radio-button-on-outline" size={16} style={{color: '#007aff'}} />);
         let radioOff = (<Icon name="ios-radio-button-off-outline" size={16} />);
 
-        let sort = (<Icon style={styles.leftIcon} name="ios-reorder-outline" size={28} />);
+        let sort = (<Icon style={styles.leftIcon} name="ios-swap-outline" size={28} />);
         let category = (<Icon style={styles.leftIcon} name="ios-list-box-outline" size={28} />);
         let bookmarks = (<Icon style={styles.leftIcon} name="ios-bookmarks-outline" size={28} />);
         return (

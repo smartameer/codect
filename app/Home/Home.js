@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-    ScrollView,
     StyleSheet,
     View,
     Text,
@@ -131,26 +130,23 @@ class Home extends Component<Props> {
         }
 
         return (
-            <ScrollView contentContainerStyle={styles.container}>
-                <FlatList
-                    data={this.state.questions}
-                    extraData={this.state}
-                    refreshing={this.state.refreshing}
-                    onRefresh={this.getData}
-                    ListEmptyComponent={this.renderEmptyComponent}
-                    ListHeaderComponent={this.renderHeader}
-                    renderItem={({item}, index) => <QuestionRow key={index} item={item} {...this.props}/>} />
-            </ScrollView>
+            <FlatList
+                contentContainerStyle={styles.container}
+                data={this.state.questions}
+                extraData={this.state}
+                refreshing={this.state.refreshing}
+                onRefresh={this.getData}
+                ListEmptyComponent={this.renderEmptyComponent}
+                ListHeaderComponent={this.renderHeader}
+                renderItem={({item}, index) => <QuestionRow key={index} item={item} {...this.props}/>} />
         );
     }
 }
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: 65,
-        flex: 1,
-        backgroundColor: '#FFFFFF',
-        flexGrow: 1,
+        marginTop: 63,
+        paddingBottom: 63,
     },
     title: {
         fontSize: 30,

@@ -8,7 +8,6 @@ import {
     FlatList,
     AsyncStorage,
     TouchableHighlight,
-    ScrollView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -125,14 +124,12 @@ class Bookmarks extends Component {
 
     render() {
         return (
-            <ScrollView style={styles.container}>
-                <FlatList
-                    data={this.state.bookmarks}
-                    extraData={this.state}
-                    ListEmptyComponent={this.renderEmptyComponent}
-                    ListHeaderComponent={this.renderHeader}
-                    renderItem={({item}, index) => this.renderBookmarkRow(index, item)} />
-            </ScrollView>
+            <FlatList
+                data={this.state.bookmarks}
+                extraData={this.state}
+                ListEmptyComponent={this.renderEmptyComponent}
+                ListHeaderComponent={this.renderHeader}
+                renderItem={({item}, index) => this.renderBookmarkRow(index, item)} />
         );
     }
 }
@@ -140,8 +137,6 @@ class Bookmarks extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFFFFF',
-        flexGrow: 1
     },
     itemContainer: {
         borderBottomColor: '#bbb',
