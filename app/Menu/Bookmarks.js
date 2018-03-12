@@ -112,7 +112,7 @@ class Bookmarks extends Component {
     renderBookmarkRow(index, item) {
         return (
             <View key={index} style={styles.itemContainer}>
-                <TouchableHighlight style={styles.fullWidth} onPress={()=>{this._handleNavigationRequest(item)}}>
+                <TouchableHighlight underlayColor={'#DDDDDD'} style={styles.fullWidth} onPress={()=>{this._handleNavigationRequest(item)}}>
                     <Text style={styles.listTitleStyle} numberOfLines={1}>{item.title}</Text>
                 </TouchableHighlight>
                 <TouchableHighlight underlayColor={'#DDDDDD'} onPress={() => { this._removeBookmark(item)}}>
