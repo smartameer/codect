@@ -50,7 +50,7 @@ class Home extends Component<Props> {
     getData () {
         this.setState({ refreshing: true });
         AsyncStorage.getItem('sortBy').then((resp) =>  {
-            this.setState({ sortBy: resp });
+            this.setState({ sortBy: resp || 'latest' });
         });
         AsyncStorage.getItem('filterBy').then(async (resp) => {
             let filterType = await AsyncStorage.getItem('filterType');

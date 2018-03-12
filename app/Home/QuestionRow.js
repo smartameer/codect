@@ -5,6 +5,7 @@ import {
     View,
     Text,
     AsyncStorage,
+    ActionSheetIOS,
     TouchableHighlight
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -27,6 +28,7 @@ class QuestionRow extends Component {
         };
         this._onPressButton = this._onPressButton.bind(this);
         this._handleBookmarking = this._handleBookmarking.bind(this);
+        this._handleActions = this._handleActions.bind(this);
         this.getBookmarkData = this.getBookmarkData.bind(this);
         this.langMap = {
             javascript: 'JS',
@@ -41,21 +43,15 @@ class QuestionRow extends Component {
 
     componentDidMount() {
         this.getBookmarkData();
-        EM.subscribe('codect:refresh:bookmark', () => {
-            this.getBookmarkData();
-        });
     }
 
     getBookmarkData() {
-        Icon.getImageSource('ios-bookmark-outline', 26).then((source) => this.setState({ rightButtonIcon: source }));
         AsyncStorage.getItem('bookmark_question_' + this.state.item.id).then((resp) => {
-            let bookmarked = false;
             if (resp !== null) {
-                bookmarked = true;
-                Icon.getImageSource('ios-bookmark', 26).then((source) => this.setState({ rightButtonIcon: source }));
+                this.setState({ bookmarked: true });
             }
-            this.setState({ bookmarked });
         });
+        Icon.getImageSource('ios-more-outline', 26).then((source) => this.setState({ rightButtonIcon: source }));
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -65,6 +61,17 @@ class QuestionRow extends Component {
             };
         }
         return null;
+    }
+
+    _handleActions() {
+        ActionSheetIOS.showActionSheetWithOptions({
+            options: ['Cancel', (!this.state.bookmarked ? 'Bookmark' : 'Remove Bookmark'), 'Mark as Read'],
+            cancelButtonIndex: 0,
+        }, (buttonIndex) => {
+            if (buttonIndex === 1) {
+                this._handleBookmarking();
+            }
+        });
     }
 
     _handleBookmarking() {
@@ -89,7 +96,7 @@ class QuestionRow extends Component {
             backButtonTitle: null,
             component: Question,
             rightButtonIcon: this.state.rightButtonIcon,
-            onRightButtonPress: () => this._handleBookmarking(),
+            onRightButtonPress: () => this._handleActions(),
             passProps: { item: this.state.item }
         });
     }
