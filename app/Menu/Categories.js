@@ -131,7 +131,8 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#FFFFFF',
         flexGrow: 1,
-        marginTop: 0
+        marginTop: 0,
+        borderTopWidth: StyleSheet.hairlineWidth,
     },
     itemContainer: {
         paddingTop: 8,

@@ -6,9 +6,9 @@ import {
     Text,
     ActivityIndicator,
     ScrollView,
+    SegmentedControlIOS,
     AsyncStorage
 } from 'react-native';
-import { ButtonGroup } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import EM from '../API/Event';
@@ -29,7 +29,7 @@ class Question extends Component {
                 id: '',
                 tags: [],
                 author: '',
-                language: [],
+                languages: [],
             },
             content: {},
             selectedIndex: 0,
@@ -56,19 +56,16 @@ class Question extends Component {
     }
 
     renderLanguageList () {
-        const languages = this.state.content.languages;
+        const languages = this.state.content.languages || [];
         const { selectedIndex } = this.state;
 
         return (
-            <ButtonGroup
-                onPress={this._updateIndex}
+            <SegmentedControlIOS
                 selectedIndex={selectedIndex}
-                buttons={languages}
-                selectedTextStyle={styles.activeTextStyle}
-                selectedButtonStyle={styles.activeBtnStyle}
-                containerStyle={styles.btnGroupContainer}
-                textStyle={styles.btnTextStyle}
-                buttonStyle={styles.btnStyle}
+                values={languages}
+                onChange={(event) => {
+                    this.setState({selectedIndex: event.nativeEvent.selectedSegmentIndex});
+                }}
             />
         )
     }
@@ -150,25 +147,6 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         marginTop: 16,
         paddingBottom: 8,
-    },
-    btnTextStyle: {
-        fontSize: 16,
-    },
-    btnStyle: {
-        borderBottomRightRadius: 0,
-        borderBottomLeftRadius: 0,
-    },
-    btnGroupContainer: {
-        height: 32,
-        borderWidth: 0,
-        marginLeft: 0,
-        marginRight: 0,
-    },
-    activeBtnStyle: {
-        backgroundColor: '#007aff',
-    },
-    activeTextStyle: {
-        color: '#FFFFFF',
     },
     codeContainer: {
         borderWidth: StyleSheet.hairlineWidth,
