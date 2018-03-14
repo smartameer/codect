@@ -77,7 +77,7 @@ class API {
     async fetchQuestionContent() {
         AsyncStorage.getItem('questions').then((questions) => {
             let list = JSON.parse(questions);
-            list.forEach(q => {
+            list.sort((a, b) => { return a.id < b.id }).forEach(q => {
                 this.processRequest(q.content)
                     .then((resp) => resp.json())
                     .then(async (resp) => {

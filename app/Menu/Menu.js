@@ -65,10 +65,9 @@ class Menu extends Component {
     }
 
     _selectOption (val) {
-        let self = this;
         this.setState({ 'sortBy': val }, () => {
             AsyncStorage.setItem( 'sortBy', val ).then(() => {
-                self.props.navigator.popToTop();
+                this.props.navigator.popToTop();
                 EM.publish('codect:refresh:home');
             });
         });

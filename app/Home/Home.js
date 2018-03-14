@@ -5,6 +5,8 @@ import {
     View,
     Text,
     ActivityIndicator,
+    TouchableHighlight,
+    ActionSheetIOS,
     FlatList,
     AsyncStorage
 } from 'react-native';
@@ -37,6 +39,7 @@ class Home extends Component<Props> {
         this.renderHeader = this.renderHeader.bind(this);
         this.renderEmptyComponent = this.renderEmptyComponent.bind(this);
         this._onSearchQuestion = this._onSearchQuestion.bind(this);
+        this._handleClearFilter = this._handleClearFilter.bind(this);
     }
 
     componentDidMount() {
@@ -48,14 +51,7 @@ class Home extends Component<Props> {
 
     getData () {
         this.setState({ refreshing: true });
-        AsyncStorage.getItem('sortBy').then((resp) =>  {
-            this.setState({ sortBy: resp || 'latest' });
-        });
-        AsyncStorage.getItem('filterBy').then(async (resp) => {
-            let filterType = await AsyncStorage.getItem('filterType');
-            this.setState({ filterBy: resp, filterType: filterType })
-        });
-        AsyncStorage.getItem('questions').then((list) => {
+        AsyncStorage.getItem('questions').then(async (list) => {
             if (list === null) {
                 this.setState({
                     isLoading: false,
@@ -72,8 +68,18 @@ class Home extends Component<Props> {
                         return p.title.toLowerCase().indexOf(this.state.searchText.toLowerCase()) > -1;
                     });
                 }
-                if (this.state.sortBy === 'latest') {
+
+                let sortBy = await AsyncStorage.getItem('sortBy');
+                this.setState({ sortBy: sortBy || 'latest' });
+                if (sortBy === 'latest') {
                     questions.sort((a, b) => { return a.id < b.id });
+                }
+
+                let filterType = await AsyncStorage.getItem('filterType');
+                let filterBy = await AsyncStorage.getItem('filterBy');
+                this.setState({filterType: filterType, filterBy: filterBy});
+                if (filterBy !== null && filterType !== null) {
+                    questions = questions.filter(q => q[filterType].indexOf(filterBy) > -1);
                 }
                 this.setState({
                     isLoading: false,
@@ -82,6 +88,10 @@ class Home extends Component<Props> {
                 });
             }
         }).done();
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        return null;
     }
 
     _onSearchQuestion(pattern) {
@@ -103,12 +113,30 @@ class Home extends Component<Props> {
         }).done();
     }
 
+    _handleClearFilter() {
+        ActionSheetIOS.showActionSheetWithOptions({
+            options: ['Cancel', 'Clear Filter'],
+            cancelButtonIndex: 0,
+        }, (buttonIndex) => {
+            if (buttonIndex === 1) {
+                AsyncStorage.multiRemove(['filterType', 'filterBy']).then(() => {
+                    this.getData();
+                });
+            }
+        });
+    }
     renderHeader() {
+        let filter = (this.state.filterType !== null) ? 'Filtered by ' + this.state.filterType.replace('s', '') + ': ' + this.state.filterBy : '';
         let header = (
             <View style={styles.header}>
               <Text style={styles.title}>Questions</Text>
-              <SearchBar autoCapitalize='none' lightTheme platform={'ios'} inputStyle={styles.searchInput} containerStyle={styles.searchContainer} placeholder={'Search from ' + this.state.questions.length + ' questions'} onChangeText={this._onSearchQuestion} />
-              <Text style={styles.sortedBy}>Sorted by: {this.state.sortBy}</Text>
+              <SearchBar autoCapitalize='none' lightTheme platform={'ios'} inputStyle={styles.searchInput} containerStyle={styles.searchContainer} placeholder={'Search'} onChangeText={this._onSearchQuestion} />
+              <View style={styles.sortFilter}>
+                <Text style={styles.sortedBy}>Sorted by: {this.state.sortBy}</Text>
+                <TouchableHighlight underlayColor="#DDDDDD" onPress={() => this._handleClearFilter()}>
+                  <Text style={styles.filterBy}>{filter}</Text>
+                </TouchableHighlight>
+              </View>
             </View>
         );
         return header;
@@ -181,11 +209,18 @@ const styles = StyleSheet.create({
         height: 44,
         color: '#0079fe'
     },
+    sortFilter: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignContent: 'center',
+    },
+    filterBy: {
+        fontSize: 11,
+        color: '#007aff',
+    },
     sortedBy: {
         fontSize: 11,
         color: '#bbb',
-        alignSelf: 'flex-end',
-        marginTop: -3,
     },
     emptyList: {
         marginTop: 20,
