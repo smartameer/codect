@@ -40,6 +40,7 @@ class Home extends Component<Props> {
         this.renderEmptyComponent = this.renderEmptyComponent.bind(this);
         this._onSearchQuestion = this._onSearchQuestion.bind(this);
         this._handleClearFilter = this._handleClearFilter.bind(this);
+        this._refreshData = this._refreshData.bind(this);
     }
 
     componentDidMount() {
@@ -50,7 +51,6 @@ class Home extends Component<Props> {
     }
 
     getData () {
-        this.setState({ refreshing: true });
         AsyncStorage.getItem('questions').then(async (list) => {
             if (list === null) {
                 this.setState({
@@ -90,10 +90,6 @@ class Home extends Component<Props> {
         }).done();
     }
 
-    static getDerivedStateFromProps(nextProps, prevState) {
-        return null;
-    }
-
     _onSearchQuestion(pattern) {
         AsyncStorage.getItem('questions').then((response) => {
             let list = [];
@@ -125,6 +121,13 @@ class Home extends Component<Props> {
             }
         });
     }
+
+    _refreshData() {
+        this.setState({ refreshing: true }, () => {
+            this.getData();
+        });
+    }
+
     renderHeader() {
         let filter = (this.state.filterType !== null) ? 'Filtered by ' + this.state.filterType.replace('s', '') + ': ' + this.state.filterBy : '';
         let header = (
@@ -163,7 +166,7 @@ class Home extends Component<Props> {
                 data={this.state.questions}
                 extraData={this.state}
                 refreshing={this.state.refreshing}
-                onRefresh={this.getData}
+                onRefresh={() => { this._refreshData()}}
                 ListEmptyComponent={this.renderEmptyComponent}
                 ListHeaderComponent={this.renderHeader}
                 renderItem={({item}, index) => <QuestionRow key={index} item={item} {...this.props}/>} />
@@ -175,6 +178,7 @@ const styles = StyleSheet.create({
     container: {
         marginTop: 63,
         paddingBottom: 63,
+        backgroundColor: 'transparent',
     },
     title: {
         fontSize: 30,
@@ -202,6 +206,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#efefef',
         borderRadius: 6,
         padding: 4,
+        fontSize: 16,
+        color: '#333',
     },
     item: {
         padding: 10,

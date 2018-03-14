@@ -69,7 +69,7 @@ class Languages extends Component {
 const styles = StyleSheet.create({
     listContainer: {
         flex: 1,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'transparent',
         flexGrow: 1,
         marginTop: 0,
         borderTopWidth: StyleSheet.hairlineWidth,

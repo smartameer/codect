@@ -8,7 +8,6 @@ console.disableYellowBox = true;
 
 // Components based on routes
 import Home from './Home/Home';
-import Settings from './Settings/Settings';
 import Menu from './Menu/Menu';
 import API from './API/API';
 
@@ -19,7 +18,6 @@ class Codect  extends Component {
         this.state = {
             isLoading: true,
             rightButtonIcon: false,
-            leftButtonIcon: false
         };
         this.apiService = new API();
         this._handleNavigationRequest = this._handleNavigationRequest.bind(this);
@@ -27,8 +25,7 @@ class Codect  extends Component {
     }
 
     componentDidMount() {
-        Icon.getImageSource('ios-settings-outline', 26).then((source) => this.setState({ rightButtonIcon: source }));
-        Icon.getImageSource('ios-list-outline', 32).then((source) => this.setState({ leftButtonIcon: source }));
+        Icon.getImageSource('ios-more-outline', 32).then((source) => this.setState({ rightButtonIcon: source }));
         this.apiService.fetchQuestionsList().then(() => {
             this.setState({ isLoading: false});
             this.apiService.fetchQuestionContent();
@@ -37,15 +34,8 @@ class Codect  extends Component {
         });
     }
 
-    _handleNavigationRequest(left) {
-        let obj = {
-            component: Settings,
-            title: 'Settings'
-        };
-        if (left === true) {
-            obj = { component: Menu, title: 'Menu' }
-        }
-
+    _handleNavigationRequest() {
+        let obj = { component: Menu, title: 'Menu' };
         this.refs.nav.push(obj);
     }
 
@@ -57,23 +47,21 @@ class Codect  extends Component {
     }
 
     render() {
-        if (this.state.isLoading || !this.state.rightButtonIcon || !this.state.leftButtonIcon) {
+        if (this.state.isLoading || !this.state.rightButtonIcon) {
             return false;
         }
         return (
           <NavigatorIOS
             ref='nav'
             translucent={true}
-            //interactivePopGestureEnabled={true}
+            interactivePopGestureEnabled={true}
             configureScene={ this.configureScene }
             initialRoute={{
                 component: Home,
                 title: 'Codect',
                 backButtonTitle: 'Home',
-                leftButtonIcon: this.state.leftButtonIcon,
-                onLeftButtonPress: () => this._handleNavigationRequest(true),
                 rightButtonIcon: this.state.rightButtonIcon,
-                onRightButtonPress: () => this._handleNavigationRequest(false),
+                onRightButtonPress: () => this._handleNavigationRequest(),
             }}
             style={{flex: 1}}
             />

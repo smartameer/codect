@@ -6,7 +6,7 @@ import {
     ScrollView
 } from 'react-native';
 
-class Settings extends Component {
+class Help extends Component {
     static propTypes = {
         title: PropTypes.string,
         navigator: PropTypes.object.isRequired,
@@ -25,7 +25,7 @@ class Settings extends Component {
     render() {
         return (
             <ScrollView style={styles.container}>
-              <Text>Settings</Text>
+              <Text style={{textAlign: 'center', marginTop: 30, fontSize: 30}}>Help</Text>
             </ScrollView>
         );
     }
@@ -34,9 +34,9 @@ class Settings extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'transparent',
     },
 });
 
-export default Settings;
+export default Help;
 

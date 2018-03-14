@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         paddingBottom: 10,
         flex: 1,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'transparent',
         borderBottomColor: '#bbb',
         borderBottomWidth: StyleSheet.hairlineWidth,
     },

@@ -38,13 +38,13 @@ class Categories extends Component {
             return false;
         }
         return (
-            <TabBarIOS selectedTab={this.state.selectedTab}>
-              <TabBarIOS.Item title="Languages" selected={this.state.selectedTab === 'languages'} selectedIcon={this.state.selectedLanguageIcon} icon={this.state.languageIcon} onPress={() => { this._onSelectTab('languages') }}>
-                <Languages {...this.props}/>
-              </TabBarIOS.Item>
-              <TabBarIOS.Item title="Tags" selected={this.state.selectedTab === 'tags'} selectedIcon={this.state.selectedTagIcon} icon={this.state.tagIcon} onPress={() => { this._onSelectTab('tags') }}>
-                <Tags {...this.props}/>
-              </TabBarIOS.Item>
+            <TabBarIOS translucent={true} selectedTab={this.state.selectedTab}>
+                <TabBarIOS.Item title="Languages" selected={this.state.selectedTab === 'languages'} selectedIcon={this.state.selectedLanguageIcon} icon={this.state.languageIcon} onPress={() => { this._onSelectTab('languages') }}>
+                    <Languages {...this.props}/>
+                </TabBarIOS.Item>
+                <TabBarIOS.Item title="Tags" selected={this.state.selectedTab === 'tags'} selectedIcon={this.state.selectedTagIcon} icon={this.state.tagIcon} onPress={() => { this._onSelectTab('tags') }}>
+                    <Tags {...this.props}/>
+                </TabBarIOS.Item>
             </TabBarIOS>
         );
     }

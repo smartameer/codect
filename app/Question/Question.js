@@ -7,7 +7,8 @@ import {
     ActivityIndicator,
     ScrollView,
     SegmentedControlIOS,
-    AsyncStorage
+    TouchableHighlight,
+    AsyncStorage,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -36,6 +37,7 @@ class Question extends Component {
         };
         this.renderLanguageList = this.renderLanguageList.bind(this);
         this._updateIndex = this._updateIndex.bind(this);
+        this._handleTagNavigation = this._handleTagNavigation.bind(this);
     }
 
     componentDidMount() {
@@ -52,7 +54,14 @@ class Question extends Component {
     }
 
     _updateIndex(selectedIndex) {
-        this.setState({selectedIndex})
+        this.setState({selectedIndex});
+    }
+
+    _handleTagNavigation(item) {
+        AsyncStorage.multiSet([['filterBy', item], ['filterType', 'tags']]).then(() => {
+            this.props.navigator.popToTop();
+            EM.publish('codect:refresh:home');
+        });
     }
 
     renderLanguageList () {
@@ -90,7 +99,11 @@ class Question extends Component {
                     <Icon name="ios-pricetags" size={18} style={styles.tagIcon}/>
                     {
                         this.state.content.tags.map((t, i) => {
-                          return <Text style={styles.tag} key={i}>{t}</Text>
+                          return (
+                              <TouchableHighlight underlayColor="#DDDDDD" onPress={() => {this._handleTagNavigation(t)}}>
+                                  <Text style={styles.tag} key={i}>{t}</Text>
+                              </TouchableHighlight>
+                          );
                         })
                     }
                     </View>
@@ -110,6 +123,7 @@ const styles = StyleSheet.create({
     container: {
         marginTop: 63,
         flex: 1,
+        backgroundColor: 'transparent',
     },
     title: {
         fontSize: 24,

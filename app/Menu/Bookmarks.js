@@ -4,7 +4,7 @@ import {
     StyleSheet,
     View,
     Text,
-    Alert,
+    AlertIOS,
     FlatList,
     AsyncStorage,
     TouchableHighlight,
@@ -65,7 +65,7 @@ class Bookmarks extends Component {
     }
 
     _removeBookmark(item) {
-        Alert.alert(
+        AlertIOS.alert(
             'Remove Bookmark',
             '',
             [
@@ -78,8 +78,7 @@ class Bookmarks extends Component {
                         });
                     });
                 }},
-            ],
-            { cancelable: false }
+            ]
         );
     }
 
@@ -125,6 +124,7 @@ class Bookmarks extends Component {
     render() {
         return (
             <FlatList
+                containerStyle={styles.container}
                 data={this.state.bookmarks}
                 extraData={this.state}
                 ListEmptyComponent={this.renderEmptyComponent}
@@ -135,6 +135,9 @@ class Bookmarks extends Component {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        backgroundColor: 'transparent',
+    },
     itemContainer: {
         borderBottomColor: '#bbb',
         borderBottomWidth: StyleSheet.hairlineWidth,
