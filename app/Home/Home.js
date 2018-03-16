@@ -5,7 +5,7 @@ import {
     View,
     Text,
     ActivityIndicator,
-    TouchableHighlight,
+    TouchableOpacity,
     ActionSheetIOS,
     FlatList,
     AsyncStorage
@@ -136,9 +136,9 @@ class Home extends Component<Props> {
               <SearchBar autoCapitalize='none' lightTheme platform={'ios'} inputStyle={styles.searchInput} containerStyle={styles.searchContainer} placeholder={'Search'} onChangeText={this._onSearchQuestion} />
               <View style={styles.sortFilter}>
                 <Text style={styles.sortedBy}>Sorted by: {this.state.sortBy}</Text>
-                <TouchableHighlight underlayColor="#DDDDDD" onPress={() => this._handleClearFilter()}>
+                <TouchableOpacity onPress={() => this._handleClearFilter()}>
                   <Text style={styles.filterBy}>{filter}</Text>
-                </TouchableHighlight>
+                </TouchableOpacity>
               </View>
             </View>
         );
@@ -169,7 +169,7 @@ class Home extends Component<Props> {
                 onRefresh={() => { this._refreshData()}}
                 ListEmptyComponent={this.renderEmptyComponent}
                 ListHeaderComponent={this.renderHeader}
-                renderItem={({item}, index) => <QuestionRow key={index} item={item} {...this.props}/>} />
+                renderItem={({item}) => <QuestionRow item={item} {...this.props}/>} />
         );
     }
 }

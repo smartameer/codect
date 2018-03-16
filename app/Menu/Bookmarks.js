@@ -7,9 +7,10 @@ import {
     AlertIOS,
     FlatList,
     AsyncStorage,
-    TouchableHighlight,
+    TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Base64 from 'base-64';
 
 import EM from '../API/Event';
 import Question from '../Question/Question';
@@ -19,6 +20,8 @@ class Bookmarks extends Component {
         title: PropTypes.string,
         navigator: PropTypes.object.isRequired,
     }
+
+    _keyExtractor = (item, index) => Base64.encode(index);
 
     constructor(props, context) {
         super(props);
@@ -69,7 +72,7 @@ class Bookmarks extends Component {
             'Remove Bookmark',
             '',
             [
-                {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                {text: 'Cancel', style: 'cancel'},
                 {text: 'OK', onPress: () => {
                     AsyncStorage.removeItem('bookmark_question_' + item.id).then(() => {
                         EM.publish('codect:bookmark:removed', item.id);
@@ -95,9 +98,9 @@ class Bookmarks extends Component {
         return (
             <View style={styles.header}>
                 <Text style={styles.title}>Bookmarks</Text>
-                { this.state.undoBookmarkQuestionId !== null && (<TouchableHighlight underlayColor={'#DDDDDD'} onPress={this._undoRemoveBookmark}>
+                { this.state.undoBookmarkQuestionId !== null && (<TouchableOpacity onPress={this._undoRemoveBookmark}>
                     <Text style={styles.undoTitleStyle}>Undo</Text>
-                </TouchableHighlight>)}
+                </TouchableOpacity>)}
             </View>
         );
     }
@@ -108,15 +111,15 @@ class Bookmarks extends Component {
         );
     }
 
-    renderBookmarkRow(index, item) {
+    renderBookmarkRow({item}) {
         return (
-            <View key={index} style={styles.itemContainer}>
-                <TouchableHighlight underlayColor={'#DDDDDD'} style={styles.fullWidth} onPress={()=>{this._handleNavigationRequest(item)}}>
+            <View style={styles.itemContainer}>
+                <TouchableOpacity style={styles.fullWidth} onPress={()=>{this._handleNavigationRequest(item)}}>
                     <Text style={styles.listTitleStyle} numberOfLines={1}>{item.title}</Text>
-                </TouchableHighlight>
-                <TouchableHighlight underlayColor={'#DDDDDD'} onPress={() => { this._removeBookmark(item)}}>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => { this._removeBookmark(item)}}>
                     <Icon style={styles.rightIconStyle} name="ios-trash-outline" size={26} />
-                </TouchableHighlight>
+                </TouchableOpacity>
             </View>
         )
     }
@@ -127,9 +130,10 @@ class Bookmarks extends Component {
                 containerStyle={styles.container}
                 data={this.state.bookmarks}
                 extraData={this.state}
+                keyExtractor={this._keyExtractor}
                 ListEmptyComponent={this.renderEmptyComponent}
                 ListHeaderComponent={this.renderHeader}
-                renderItem={({item}, index) => this.renderBookmarkRow(index, item)} />
+                renderItem={this.renderBookmarkRow} />
         );
     }
 }

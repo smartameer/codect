@@ -10,6 +10,7 @@ console.disableYellowBox = true;
 import Home from './Home/Home';
 import Menu from './Menu/Menu';
 import API from './API/API';
+import EM from './API/Event';
 
 class Codect  extends Component {
 
@@ -29,8 +30,10 @@ class Codect  extends Component {
         this.apiService.fetchQuestionsList().then(() => {
             this.setState({ isLoading: false});
             this.apiService.fetchQuestionContent();
+            EM.publish('codect:refresh:home');
         }).catch(() => {
             this.setState({ isLoading: false});
+            EM.publish('codect:refresh:home');
         });
     }
 

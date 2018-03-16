@@ -47,6 +47,9 @@ class API {
                         if (content.length > 0) {
                             let tags = {}, languages = {};
                             content = JSON.parse(content);
+                            content.forEach((c) => {
+                                c.key = Base64.encode(c.id);
+                            });
                             AsyncStorage.setItem('questions', JSON.stringify(content));
                             AsyncStorage.setItem('last_fetched_sha', response.sha);
 

@@ -7,7 +7,7 @@ import {
     ActivityIndicator,
     ScrollView,
     SegmentedControlIOS,
-    TouchableHighlight,
+    TouchableOpacity,
     AsyncStorage,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -100,9 +100,9 @@ class Question extends Component {
                     {
                         this.state.content.tags.map((t, i) => {
                           return (
-                              <TouchableHighlight underlayColor="#DDDDDD" onPress={() => {this._handleTagNavigation(t)}}>
+                              <TouchableOpacity key={i} onPress={() => {this._handleTagNavigation(t)}}>
                                   <Text style={styles.tag} key={i}>{t}</Text>
-                              </TouchableHighlight>
+                              </TouchableOpacity>
                           );
                         })
                     }

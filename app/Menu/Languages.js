@@ -9,6 +9,7 @@ import {
     TouchableHighlight,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Base64 from 'base-64';
 
 import EM from '../API/Event';
 
@@ -16,6 +17,8 @@ class Languages extends Component {
     static propTypes = {
         navigator: PropTypes.object.isRequired,
     }
+
+    _keyExtractor = (item, index) => Base64.encode(index);
 
     constructor(props, context) {
         super(props);
@@ -46,6 +49,7 @@ class Languages extends Component {
             <FlatList
                 data={this.state.languages}
                 extraData={this.state}
+                keyExtractor={this._keyExtractor}
                 ListEmptyComponent={(
                     <Text style={styles.emptyList}>Languages hasn't been added.</Text>
                 )}
@@ -54,9 +58,9 @@ class Languages extends Component {
                         <Text style={styles.title}>Languages</Text>
                     </View>
                 )}
-                renderItem={({item}, index) => (
+                renderItem={({item}) => (
                     <TouchableHighlight underlayColor="#DDDDDD" onPress={() => {this._handleLanguageNavigation(item)}}>
-                        <View key={index} style={styles.itemContainer}>
+                        <View style={styles.itemContainer}>
                             <Text style={styles.listTitleStyle} numberOfLines={1}>{item}</Text>
                             <Icon name="ios-arrow-forward-outline" size={20} style={styles.rightIconStyle}/>
                         </View>

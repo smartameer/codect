@@ -105,7 +105,7 @@ class Menu extends Component {
             'Feedback',
             'Help us to make it better',
             [
-                {text: 'Close', style: 'cancel'},
+                {text: 'No, Thanks', style: 'cancel'},
                 {text: 'Email your feedback', onPress: () => {
                     Linking.openURL('mailto:smartameer@icloud.com?subject=Feedback on Codect');
                 }},
