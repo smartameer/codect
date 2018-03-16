@@ -7,7 +7,7 @@ import {
     AlertIOS,
     FlatList,
     AsyncStorage,
-    TouchableOpacity,
+    TouchableHighlight,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Base64 from 'base-64';
@@ -98,9 +98,9 @@ class Bookmarks extends Component {
         return (
             <View style={styles.header}>
                 <Text style={styles.title}>Bookmarks</Text>
-                { this.state.undoBookmarkQuestionId !== null && (<TouchableOpacity onPress={this._undoRemoveBookmark}>
+                { this.state.undoBookmarkQuestionId !== null && (<TouchableHighlight underlayColor={'#DDDDDD'} onPress={this._undoRemoveBookmark}>
                     <Text style={styles.undoTitleStyle}>Undo</Text>
-                </TouchableOpacity>)}
+                </TouchableHighlight>)}
             </View>
         );
     }
@@ -114,12 +114,12 @@ class Bookmarks extends Component {
     renderBookmarkRow({item}) {
         return (
             <View style={styles.itemContainer}>
-                <TouchableOpacity style={styles.fullWidth} onPress={()=>{this._handleNavigationRequest(item)}}>
+                <TouchableHighlight underlayColor={'#DDDDDD'} style={styles.fullWidth} onPress={()=>{this._handleNavigationRequest(item)}}>
                     <Text style={styles.listTitleStyle} numberOfLines={1}>{item.title}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => { this._removeBookmark(item)}}>
+                </TouchableHighlight>
+                <TouchableHighlight underlayColor={'#DDDDDD'} onPress={() => { this._removeBookmark(item)}}>
                     <Icon style={styles.rightIconStyle} name="ios-trash-outline" size={26} />
-                </TouchableOpacity>
+                </TouchableHighlight>
             </View>
         )
     }
@@ -155,6 +155,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignSelf: 'stretch',
         alignContent: 'stretch',
+        flex: 1,
     },
     listTitleStyle: {
         fontSize: 16,
@@ -163,13 +164,15 @@ const styles = StyleSheet.create({
         paddingRight: 16,
         marginRight: 8,
         paddingLeft: 16,
+        alignSelf: 'flex-start',
     },
     rightIconStyle: {
         color: '#ff3b30',
-        paddingTop: 8,
-        paddingBottom: 8,
+        paddingTop: 10,
+        paddingBottom: 10,
         paddingRight: 16,
         paddingLeft: 16,
+        alignSelf: 'flex-end',
     },
     header: {
         paddingLeft: 16,
