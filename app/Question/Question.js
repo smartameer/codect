@@ -119,7 +119,9 @@ class Question extends Component {
                     <Text style={styles.description}>{this.state.content.description}</Text>
                     { this.renderLanguageList() }
                     <View style={styles.codeContainer}>
-                        <Text style={styles.code}>{this.state.content.code[currentCode]}</Text>
+                        <ScrollView horizontal>
+                            <Text style={styles.code}>{this.state.content.code[currentCode]}</Text>
+                        </ScrollView>
                     </View>
                     { this.state.content.author.length > 0 && (
                         <View style={styles.refWrapper}>
