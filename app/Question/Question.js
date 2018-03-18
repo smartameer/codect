@@ -6,6 +6,7 @@ import {
     Text,
     ActivityIndicator,
     ScrollView,
+    Linking,
     SegmentedControlIOS,
     TouchableOpacity,
     AsyncStorage,
@@ -29,7 +30,7 @@ class Question extends Component {
                 title: '',
                 id: '',
                 tags: [],
-                author: '',
+                author: [],
                 ref: [],
                 languages: [],
             },
@@ -39,6 +40,7 @@ class Question extends Component {
         this.renderLanguageList = this.renderLanguageList.bind(this);
         this._updateIndex = this._updateIndex.bind(this);
         this._handleTagNavigation = this._handleTagNavigation.bind(this);
+        this._handleRefNavigation = this._handleRefNavigation.bind(this);
     }
 
     componentDidMount() {
@@ -63,6 +65,12 @@ class Question extends Component {
             this.props.navigator.popToTop();
             EM.publish('codect:refresh:home');
         });
+    }
+
+    _handleRefNavigation(link) {
+        Linking.canOpenURL(link).then(supported => {
+            supported && Linking.openURL(link);
+        }, (err) => console.log(err));
     }
 
     renderLanguageList () {
@@ -113,7 +121,30 @@ class Question extends Component {
                     <View style={styles.codeContainer}>
                         <Text style={styles.code}>{this.state.content.code[currentCode]}</Text>
                     </View>
-                    <Text style={styles.credits}>Credits: {this.state.content.author}</Text>
+                    { this.state.content.author.length > 0 && (
+                        <View style={styles.refWrapper}>
+                            <Text style={styles.refHeader}>Credits:</Text>
+                            <View style={styles.refStyles}>
+                            { this.state.content.author.map((r, i) => (
+                                <TouchableOpacity key={i} onPress={() => {this._handleRefNavigation(r.url)}}>
+                                    <Text style={styles.refUrl} ellipsizeMode='tail' numberOfLines={1}>{r.name}{this.state.content.author.length - i > 1 && ', '}</Text>
+                                </TouchableOpacity>
+                            ))}
+                            </View>
+                        </View>
+                    )}
+                    { this.state.content.ref.length > 0 && (
+                        <View style={styles.refWrapper}>
+                            <Text style={styles.refHeader}>References:</Text>
+                            { this.state.content.ref.map((r, i) => (
+                                <View key={i} style={styles.refStyles}>
+                                    <TouchableOpacity onPress={() => {this._handleRefNavigation(r.url)}}>
+                                        <Text style={styles.refUrl} ellipsizeMode='tail' numberOfLines={1}>{i+1}. {r.name}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            ))}
+                        </View>
+                    )}
                 </ScrollView>
             </View>
         );
@@ -183,7 +214,26 @@ const styles = StyleSheet.create({
     credits: {
         color: '#bbb',
         fontSize: 13,
-        marginBottom: 30,
+        marginBottom: 10,
+    },
+    refWrapper: {
+        flex: 1,
+        marginBottom: 20,
+    },
+    refStyles: {
+        borderTopWidth: StyleSheet.hairlineWidth,
+        borderTopColor: '#bbb',
+    },
+    refHeader: {
+        color: '#bbb',
+        fontSize: 13,
+        paddingBottom: 5,
+    },
+    refUrl: {
+        color: '#007aff',
+        fontSize: 14,
+        paddingTop: 10,
+        paddingBottom: 10,
     },
 });
 
