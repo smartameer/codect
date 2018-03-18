@@ -30,6 +30,7 @@ class Question extends Component {
                 id: '',
                 tags: [],
                 author: '',
+                ref: [],
                 languages: [],
             },
             content: {},

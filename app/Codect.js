@@ -21,13 +21,21 @@ class Codect  extends Component {
             rightButtonIcon: false,
         };
         this.apiService = new API();
+        this._fetchAll = this._fetchAll.bind(this);
         this._handleNavigationRequest = this._handleNavigationRequest.bind(this);
         this.configureScene = this.configureScene.bind(this);
     }
 
     componentDidMount() {
         Icon.getImageSource('ios-more-outline', 32).then((source) => this.setState({ rightButtonIcon: source }));
-        this.apiService.fetchQuestionsList().then(() => {
+        EM.subscribe('codect:refresh:all', () => {
+            this._fetchAll(true);
+        });
+        this._fetchAll();
+    }
+
+    _fetchAll(force = false) {
+        this.apiService.fetchQuestionsList(force).then(() => {
             this.setState({ isLoading: false});
             this.apiService.fetchQuestionContent();
             EM.publish('codect:refresh:home');
@@ -35,6 +43,7 @@ class Codect  extends Component {
             this.setState({ isLoading: false});
             EM.publish('codect:refresh:home');
         });
+
     }
 
     _handleNavigationRequest() {

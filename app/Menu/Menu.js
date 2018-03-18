@@ -5,6 +5,7 @@ import {
     TouchableHighlight,
     AsyncStorage,
     View,
+    Text,
     Linking,
     AlertIOS,
     TabBarIOS,
@@ -32,9 +33,11 @@ class Menu extends Component {
             filterBy: null,
             aboutIcon: null,
             helpIcon: null,
-            helpSelectedIcon: null,
+            detailsIcon: null,
             feedbackIcon: null,
             selectedTab: null,
+            last_updated: '',
+            requests_left: 60,
         };
         this._handleNavigation = this._handleNavigation.bind(this);
         this._expandList = this._expandList.bind(this);
@@ -52,9 +55,17 @@ class Menu extends Component {
             let filterBy = resp;
             this.setState({ filterBy: filterBy });
         });
+        AsyncStorage.getItem('last_updated').then(resp => {
+            let t = parseInt(resp, 10);
+            let last_updated = new Date(t).toLocaleString();
+            this.setState({last_updated});
+        });
+        AsyncStorage.getItem('requests_left').then(resp => {
+            this.setState({requests_left: resp});
+        });
         Icon.getImageSource('ios-information-circle-outline', 24).then((source) => this.setState({ aboutIcon: source }));
-        Icon.getImageSource('ios-help-circle-outline', 24).then((source) => this.setState({ helpIcon: source }));
-        Icon.getImageSource('ios-help-circle', 24).then((source) => this.setState({ helpSelectedIcon: source }));
+        Icon.getImageSource('ios-help-buoy-outline', 24).then((source) => this.setState({ helpIcon: source }));
+        Icon.getImageSource('ios-sync-outline', 24).then((source) => this.setState({ detailsIcon: source }));
         Icon.getImageSource('ios-happy-outline', 24).then((source) => this.setState({ feedbackIcon: source }));
     }
 
@@ -100,6 +111,16 @@ class Menu extends Component {
         );
     }
 
+    _showDetails() {
+        let desc = 'We have a limit of 60 reqests per hour\n\nLast updated: ' + this.state.last_updated + '\nRequests Left: ' + this.state.requests_left;
+        AlertIOS.alert(
+            'Details', desc,
+            [
+                {text: 'Close', style: 'cancel'},
+            ]
+        );
+    }
+
     _showFeedback() {
         AlertIOS.alert(
             'Feedback',
@@ -120,7 +141,7 @@ class Menu extends Component {
     }
 
     render() {
-        if (!this.state.aboutIcon || !this.state.helpIcon || !this.state.feedbackIcon || !this.state.helpSelectedIcon) {
+        if (!this.state.aboutIcon || !this.state.helpIcon || !this.state.feedbackIcon || !this.state.detailsIcon) {
             return false;
         }
         let plus = (<Icon name="ios-add-outline" size={26} />);
@@ -152,6 +173,8 @@ class Menu extends Component {
                     <TabBarIOS.Item title="Feedback" icon={this.state.feedbackIcon} onPress={() => {this._showFeedback()}} >
                     </TabBarIOS.Item>
                     <TabBarIOS.Item title="About" icon={this.state.aboutIcon} onPress={() => {this._showAbout()}}>
+                    </TabBarIOS.Item>
+                    <TabBarIOS.Item title="Details" icon={this.state.detailsIcon} onPress={() => {this._showDetails()}}>
                     </TabBarIOS.Item>
                 </TabBarIOS>
             </View>
@@ -190,6 +213,15 @@ const styles = StyleSheet.create({
         marginTop: 6,
         marginRight: 10,
         color: '#007aff'
+    },
+    detailsItemStyle: {
+        padding: 8,
+        position: 'absolute',
+        bottom: '12%',
+    },
+    detailsStyle: {
+        fontSize: 12,
+        color: '#bbb',
     }
 });
 

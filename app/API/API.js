@@ -12,6 +12,7 @@ class API {
         this.base_path = '/repos/smartameer/codect-code/contents/';
         this.questions_uri = 'list.json';
         this.processRequest = this.processRequest.bind(this);
+        this._updateTime = this._updateTime.bind(this);
         this.fetchQuestionsList = this.fetchQuestionsList.bind(this);
     }
 
@@ -27,18 +28,26 @@ class API {
         });
     }
 
-    fetchQuestionsList() {
+    _updateTime() {
+        AsyncStorage.setItem('last_updated', new Date().getTime().toString());
+    }
+
+    fetchQuestionsList(force = false) {
         return new Promise((resolve, reject) => {
             this.processRequest(this.questions_uri)
-                .then((resp) => resp.json())
+                .then((resp) => {
+                    AsyncStorage.setItem('requests_left', resp.headers.get('x-ratelimit-remaining').toString());
+                    return resp.json();
+                })
                 .then(async (resp) => {
                     let response = resp;
                     if (response.message) {
                         return reject();
                     }
 
+                    this._updateTime();
                     let sha = await AsyncStorage.getItem('last_fetched_sha');
-                    if (sha !== null && response.sha === sha) {
+                    if (!force && sha !== null && response.sha === sha) {
                         return resolve();
                     }
                     AsyncStorage.multiRemove(['questions', 'tags', 'languages']);
@@ -82,7 +91,10 @@ class API {
             let list = JSON.parse(questions);
             list.sort((a, b) => { return a.id < b.id }).forEach(q => {
                 this.processRequest(q.content)
-                    .then((resp) => resp.json())
+                    .then((resp) => {
+                        AsyncStorage.setItem('requests_left', resp.headers.get('x-ratelimit-remaining').toString());
+                        return resp.json();
+                    })
                     .then(async (resp) => {
                         try {
                             let content = Base64.decode(resp.content);
@@ -90,6 +102,7 @@ class API {
                             let stringifyContent = JSON.stringify(jsonContent);
                             AsyncStorage.setItem('question_id_' + q.id, stringifyContent);
                             AsyncStorage.setItem('question_id_' + q.id + '_last_sha', resp.sha);
+                            this._updateTime();
                         } catch (error) {
                             console.log(error);
                         }

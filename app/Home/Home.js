@@ -35,6 +35,7 @@ class Home extends Component<Props> {
             filterType: null,
             filterBy: null,
         };
+
         this.getData = this.getData.bind(this);
         this.renderHeader = this.renderHeader.bind(this);
         this.renderEmptyComponent = this.renderEmptyComponent.bind(this);
@@ -50,7 +51,7 @@ class Home extends Component<Props> {
         this.getData();
     }
 
-    getData () {
+    getData (force = false) {
         AsyncStorage.getItem('questions').then(async (list) => {
             if (list === null) {
                 this.setState({
@@ -124,7 +125,7 @@ class Home extends Component<Props> {
 
     _refreshData() {
         this.setState({ refreshing: true }, () => {
-            this.getData();
+            EM.publish('codect:refresh:all');
         });
     }
 
